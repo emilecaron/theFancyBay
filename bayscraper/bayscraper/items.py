@@ -17,6 +17,7 @@ class MovieItem(Item):
     imdb_url = Field()
 
     img = Field()
+    img_name = Field()
     name_clean = Field() ###
 
 

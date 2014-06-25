@@ -3,7 +3,7 @@
 
 <div class=moviegrid>
     {% for movie in movies %}
-        <a class="movie" href="{{ movie.imdb_url }}" style="background: url(&quot;{{ movie.img }}&quot;) repeat scroll center center rgb(0, 0, 0);">
+        <a class="movie" href="{{ movie.imdb_url }}" style="background: url(&quot;cache/{{ movie.img_name }}&quot;) repeat scroll center center rgb(0, 0, 0);">
             <div class="foo"></div>
             <div class="overlay" >{{ movie.name_clean }}</div>
         </a>

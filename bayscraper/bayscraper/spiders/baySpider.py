@@ -88,7 +88,8 @@ class BaySpider(Spider):
         name= sel.xpath(namex).extract().pop()
 
         if img :
-            item['img'] = img.pop()
+            item['img'] = img[0]
+            item['img_name'] = img[0].split('/')[-1]
             item['name_clean'] = name
             return item
         else :    
