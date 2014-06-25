@@ -1,16 +1,16 @@
 {% extends "layout.html" %}
 {% block body %}
-
 <div class=moviegrid>
     {% for movie in movies %}
-        <a class="movie" href="{{ movie.imdb_url }}" style="background: url(&quot;cache/{{ movie.img_name }}&quot;) repeat scroll center center rgb(0, 0, 0);">
-            <div class="foo"></div>
-            <div class="overlay" >{{ movie.name_clean }}</div>
-        </a>
+        <div class="moviegnette" style="background: url(&quot;cache/{{ movie.img_name }}&quot;);">
+            <div class="stripe corner-stripe"></div>
+            <a href="{{ movie.link }}"><p class="corner-text-left">{{ movie.seeders}}</p></a>
+            <a href="{{ movie.link }}"><p class="corner-text-right">{{ movie.leechers}}</p></a>
+            <a href="{{ movie.imdb_url }}"><p class="bottom-text-1-2 hidden">Details</p></a>
+            <a href="{{ movie.magnet }}"><p class="bottom-text-2-2 hidden">Download</p></a>
+        </div>
     {% else %}
         <em>Nothing here...</em>
     {% endfor %}
 </div>
 {% endblock %}
-
-

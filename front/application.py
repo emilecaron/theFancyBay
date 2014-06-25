@@ -39,7 +39,7 @@ def get_img(img):
         local_filename = path.join('cache', img)
         try :
             r = requests.get(url, stream=True)
-        except requests.exception.ConnectionError:
+        except requests.ConnectionError:
             return 
         with open(local_filename, 'wb') as f:
             for chunk in r.iter_content(chunk_size=1024): 

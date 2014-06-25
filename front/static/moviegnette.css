@@ -16,16 +16,28 @@ body{
     float: left;
 }
 
+.hidden {
+    opacity: 0;
+    border-radius: 3px 3px 3px 3px;
+
+}
+
+.hidden:hover {
+    opacity: 1;
+    border: 1px solid black;
+}
+
 .stripe {
     background: #000;
     position: absolute;
     opacity: 0.5;
 }
+
 .bottom-stripe {
     border-radius: 0 0 6px 6px;
     bottom: 0px;
     left: 0px;
-    height: 35px;
+    height: 28px;
     width: 100%;
 }
 
@@ -48,6 +60,7 @@ body{
     margin: 0 0 0 0;
     color: rgb(0,255,0);
     font-weight: bold;
+    font-size: small;
 }
 
 .corner-text-right{
@@ -61,6 +74,7 @@ body{
     margin: 0 0 0 0;
     color: red;
     font-weight: bold;
+    font-size: small;
 }
 
 .bottom-text-1-2{
@@ -70,9 +84,23 @@ body{
     left: 2px;
     bottom: 2px;
     width: 97px;
-    height: 31px;
+    height: 20px;
     margin: 0 0 0 0;
-    color: white;
+    color: black; 
+    background-color: gold;
+}
+
+.bottom-text-2-2{
+    position: absolute;
+    text-align: center;
+    text-decoration: none;
+    right: 2px;
+    bottom: 2px;
+    width: 97px;
+    height: 20px;
+    margin: 0 0 0 0;
+    color: black; 
+    background-color: red
 }
 
 .bottom-text-3-4{
@@ -82,9 +110,8 @@ body{
     left: 101px;
     bottom: 2px;
     width: 49px;
-    height: 31px;
+    height: 20px;
     margin: 0 0 0 0;
-    color: blue;
     color: white;
 }
 
@@ -95,8 +122,7 @@ body{
     right: 2px;
     bottom: 2px;
     width: 48px;
-    height: 31px;
+    height: 20px;
     margin: 0 0 0 0;
-    color: red;
     color: white;
 }

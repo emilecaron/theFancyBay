@@ -1,5 +1,6 @@
 *.swp
 *.pyc
-*.swo
+front/templates/*.swo
+front/*.swo
 front/cache/*
 .gitignore
