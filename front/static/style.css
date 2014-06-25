@@ -1,0 +1,26 @@
+.movie {
+    display: block;
+    margin: 5px; 
+    border-radius: 6px 6px 6px 6px; 
+    position: relative; 
+    height: 300px; 
+    width: 200px; 
+    background: url(&quot;{{ movie.img }}&quot;) repeat scroll center center rgb(0, 0, 0); 
+    border: 1px solid rgb(17, 17, 17); 
+    box-shadow: 0px 0px 2px rgb(0, 0, 0); 
+    float: left;"
+}
+.overlay {
+    position: absolute; 
+    left: 0px; 
+    width: 100%; 
+    text-align: center; 
+    bottom: 0px; 
+    font-size: 13px; 
+    line-height: 28px; 
+    text-shadow: 1px 1px 1px #000; 
+    color: gold;
+}
+h1 {
+    color: #377ba8;
+}

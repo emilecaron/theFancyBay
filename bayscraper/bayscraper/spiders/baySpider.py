@@ -31,6 +31,7 @@ class BaySpider(Spider):
             'link'  : 'td/div[@class="detName"]/a/@href',
             'seeders'   : 'td[position()=3]/text()',
             'leechers'  : 'td[position()=3]/text()',
+            'magnet'    :  'td/a[starts-with(@href, "magnet")]/@href'
         }
 
         for row in Selector(response).xpath('//tr[not(@class)]'): 
@@ -63,23 +64,34 @@ class BaySpider(Spider):
         Extract imdb link and request.
         Movies with no links are dropped
         """
-        url = Selector(response).xpath('//a[contains(@href,"{}")]/@href'.format(imdbDomain)).extract()
-        if url :
-            r =  Request( url.pop(), self.parseMovieImdb)
-            r.meta['item'] = response.meta['item']
+        urll = Selector(response).xpath('//a[contains(@href,"{}")]/@href'.format(imdbDomain)).extract()
+        if urll :
+            url = urll.pop()
+            r =  Request( url, self.parseMovieImdb)
+            item = response.meta['item']
+            item['imdb_url']=url
+            r.meta['item'] = item
             return r
+
         self.log('No Imdb for ' + response.meta['item']['name'])
 
     def parseMovieImdb(self, response):
+        """
+        Retrieve image path and return item
+        Movies with no image are dropped
+        """
         item = response.meta['item']
         sel = Selector(response)
-        expr = '//img[contains(@alt, "Poster") and substring-after(@alt, "Poster")=""]/@src' 
-        img = sel.xpath(expr).extract()
+        imgx = '//img[contains(@alt, "Poster") and substring-after(@alt, "Poster")=""]/@src' 
+        namex = '//h1[@class="header"]/span[@itemprop="name"]/text()'
+        img = sel.xpath(imgx).extract()
+        name= sel.xpath(namex).extract().pop()
 
         if img :
             item['img'] = img.pop()
+            item['name_clean'] = name
             return item
         else :    
-            self.log('No image for ' + item['name'])
+            self.log('No image for ' + name)
 
 
