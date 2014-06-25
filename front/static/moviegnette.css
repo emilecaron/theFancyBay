@@ -1,0 +1,102 @@
+body{
+    font-family: Calibri, sans-serif;
+}
+
+.moviegnette {
+    display: block;
+    margin: 5px;
+    border-radius: 6px 6px 6px 6px;
+    position: relative;
+    height: 300px;
+    width: 200px;
+    background: url("poney.jpg");
+    background-size: 100% 100%;
+    border: 1px solid rgb(17, 17, 120);
+    box-shadow: 0px 0px 2px rgb(0, 0, 0);
+    float: left;
+}
+
+.stripe {
+    background: #000;
+    position: absolute;
+    opacity: 0.5;
+}
+.bottom-stripe {
+    border-radius: 0 0 6px 6px;
+    bottom: 0px;
+    left: 0px;
+    height: 35px;
+    width: 100%;
+}
+
+.corner-stripe {
+    border-radius: 3px 3px 3px 3px;
+    top: 3px;
+    right: 3px;
+    height: 22px;
+    width: 100px;
+}
+
+.corner-text-left{
+    position: absolute;
+    text-align: center;
+    text-decoration: none;
+    right: 52px;
+    top: 5px;
+    width: 47px;
+    height: 18px;
+    margin: 0 0 0 0;
+    color: rgb(0,255,0);
+    font-weight: bold;
+}
+
+.corner-text-right{
+    position: absolute;
+    text-align: center;
+    text-decoration: none;
+    right: 5px;
+    top: 5px;
+    width: 47px;
+    height: 18px;
+    margin: 0 0 0 0;
+    color: red;
+    font-weight: bold;
+}
+
+.bottom-text-1-2{
+    position: absolute;
+    text-align: center;
+    text-decoration: none;
+    left: 2px;
+    bottom: 2px;
+    width: 97px;
+    height: 31px;
+    margin: 0 0 0 0;
+    color: white;
+}
+
+.bottom-text-3-4{
+    position: absolute;
+    text-align: center;
+    text-decoration: none;
+    left: 101px;
+    bottom: 2px;
+    width: 49px;
+    height: 31px;
+    margin: 0 0 0 0;
+    color: blue;
+    color: white;
+}
+
+.bottom-text-4-4{
+    position: absolute;
+    text-align: center;
+    text-decoration: none;
+    right: 2px;
+    bottom: 2px;
+    width: 48px;
+    height: 31px;
+    margin: 0 0 0 0;
+    color: red;
+    color: white;
+}
