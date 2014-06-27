@@ -13,17 +13,21 @@ class BaySpider(Spider):
     """
     name = "BaySpider"
     allowed_domains = [ bayDomain, imdbDomain]
-    start_urls = ['http://{}/top/201'.format(bayDomain)]
+    start_urls = [
+        'http://{}/top/201'.format(bayDomain),
+     ] 
 
-    # static
-    #item_Buffer = {}
-    
+    def loadSearch(self, query):
+        """
+        Build and set start url from search
+        """
+        url = 'http://{}/search/{}/0/99/200'.format(bayDomain, query)
+        BaySpider.start_urls = [ url ]
 
     def parse(self, response):
         """
         Parse PirateBay Result page
         """
-        items = [] # put static ?
         requests = [] 
 
         xpaths = {
@@ -41,7 +45,7 @@ class BaySpider(Spider):
                 l.default_input_processor = Join()
                 
                 for key, xpath in xpaths.iteritems():
-                    l.add_xpath(key, xpath)
+                   l.add_xpath(key, xpath)
 
                 link = l.get_output_value('link')
                 r = Request( link, self.parseMoviePage)
@@ -64,10 +68,13 @@ class BaySpider(Spider):
         Extract imdb link and request.
         Movies with no links are dropped
         """
+        self.log('parseMoviePage')
         urll = Selector(response).xpath('//a[contains(@href,"{}")]/@href'.format(imdbDomain)).extract()
         if urll :
-            url = urll.pop()
-            r =  Request( url, self.parseMovieImdb)
+            url = urll.pop().strip('\n ')
+            self.log('Gotcha:'+url)
+            #r =  Request( url, self.parseMovieImdb)
+            r = Request(url=url, callback=self.parseMovieImdb,dont_filter=True) 
             item = response.meta['item']
             item['imdb_url']=url
             r.meta['item'] = item
