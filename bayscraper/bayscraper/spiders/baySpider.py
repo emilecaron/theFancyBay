@@ -16,6 +16,7 @@ class BaySpider(Spider):
     start_urls = [
         'http://{}/top/201'.format(bayDomain),
      ] 
+    query=''
 
     def loadSearch(self, query):
         """
@@ -23,6 +24,13 @@ class BaySpider(Spider):
         """
         url = 'http://{}/search/{}/0/99/200'.format(bayDomain, query)
         BaySpider.start_urls = [ url ]
+        BaySpider.query=query
+
+    def callBack(self, mtd):
+        """
+
+        """
+        mtd()
 
     def parse(self, response):
         """
@@ -77,6 +85,7 @@ class BaySpider(Spider):
             r = Request(url=url, callback=self.parseMovieImdb,dont_filter=True) 
             item = response.meta['item']
             item['imdb_url']=url
+            item['query']=BaySpider.query
             r.meta['item'] = item
             return r
 

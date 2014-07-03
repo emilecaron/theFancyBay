@@ -1,45 +1,83 @@
-from twisted.internet import reactor
 from scrapy.crawler import Crawler
-from scrapy.xlib.pydispatch import dispatcher
 from scrapy import log, signals
 from scrapy.utils.project import get_project_settings
 from bayscraper import settings
 from bayscraper.spiders.baySpider import BaySpider
 from scrapy.settings import Settings
-import time
+from scrapy.xlib.pydispatch import dispatcher
 
-def sendSpider( query='' ):
-    """
-    Load a BaySpider with its settings + run scrapy
-    Returns (scraptime, error)
-    """
-    #TODO : use thread instead of reactor/dispatcher
-    spider = BaySpider()
-    if query != '':
-        print('Making custom search...')
-        spider.loadSearch(query)
-    ownSettings = get_project_settings()
-    ownSettings.setmodule(settings)
-    crawler = Crawler(ownSettings)
-    crawler.configure()
-    crawler.crawl(spider)
-    crawler.start()
-    try :
-        dispatcher.connect(reactor.stop, signal=signals.spider_closed)
-    except Exception as e:
-        print(e)
-        exit(1)
+from twisted.internet import reactor, task
 
-    log.start(loglevel=log.DEBUG)
-    print('Spider sent...')
-    t0 = time.time()
-    reactor.run(False)
-    d = round(time.time()-t0, 3)
-    error = 0
+class SpiderFarm(object):
 
-    return d, error
-    return 'running...', 0
+    # Scheduled function -> executed on next iteration 
+    f = None
+
+    # static thread
+    t = None 
+
+    @classmethod
+    def loopRunner( cls,_1=None, _2=None):
+        #print('Mission is complete')
+        #print(_1)
+        #print(_2)
+        if cls.f !=None:
+            print('crawler.start()')
+            b = cls.f
+            cls.f= None
+            b()
+
+    @classmethod
+    def scrapCallback( cls ):
+        print('Scraping Done.')
+
+
+    @classmethod
+    def sendSpider( cls, query='' ):
+        """
+        Load a BaySpider with its settings + run scrapy
+        Returns (scraptime, error)
+        """
+        # start a thread if static t is None
+        if cls.t is None :
+            print('Starting reactor...')
+            l = task.LoopingCall(cls.loopRunner)
+            #l.start(5.0)
+            l.start(5.0)
+            from threading import Thread
+            cls.t = Thread(target=reactor.run, args=(False,))
+            cls.t.start()
+
+
+        spider = BaySpider()
+        if query != '':
+            print('Making custom search...')
+            spider.loadSearch(query)
+        spider.callBack(cls.scrapCallback)
+        ownSettings = get_project_settings()
+        ownSettings.setmodule(settings)
+        cls.crawler = Crawler(ownSettings)
+        cls.crawler.configure()
+        cls.crawler.crawl(spider)
+        print('Spider ready...')
+        #d.addCallback(missionComplete)
+        try :
+            pass
+            #cls.crawler.signals.connect(cls.missionComplete, signals.engine_stopped)
+            #dispatcher.connect(cls.missionComplete, signals.spider_closed)
+        except:
+            pass
+        #log.start(loglevel=log.DEBUG)
+        #log.start()
+        #d = cls.crawler.start()
+        cls.f = cls.crawler.start
+        #import time
+        #time.sleep(10)
+        #log.start()
+        print('Spider sent...')
+        #return d
+        return "foo", 0
+
 
 if __name__=='__main__' :
-    print( '{}s'.format(sendSpider(raw_input('Search TPB >'))[0]))
-
+    SpiderFarm.sendSpider("matrix")
