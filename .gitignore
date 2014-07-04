@@ -4,3 +4,4 @@ front/templates/*.swo
 front/*.swo
 front/cache/*
 .gitignore
+front/dump.log
