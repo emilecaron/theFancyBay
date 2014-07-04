@@ -20,4 +20,6 @@ class MovieItem(Item):
     img_name = Field()
     name_clean = Field() ###
 
+    query = Field()
+
 
