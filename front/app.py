@@ -5,6 +5,7 @@ import requests
 import zoo
 import time
 from mongokit import Connection, ConnectionError
+from flask_sockets import Sockets
 
 #configuration
 MONGODB_HOST = 'localhost'
@@ -13,6 +14,7 @@ MONGODB_PORT = 27017
 # create the application object
 app = Flask(__name__)
 app.config.from_object(__name__)
+sockets = Sockets(app)
 
 # connect to the database
 try :
@@ -25,7 +27,13 @@ except Exception:
 db = con.moviesdb
 #db = con.moviesdb
 
+### SOCKETS (beta) #################################################
 
+@sockets.route('/echo')
+def echo_socket(ws):
+    while True:
+        message = ws.receive()
+        ws.send(message)
 
 ### ROUTING ########################################################
 

@@ -3,5 +3,5 @@
 front/templates/*.swo
 front/*.swo
 front/cache/*
-.gitignore
 front/dump.log
+front/pipeline.log
