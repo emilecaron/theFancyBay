@@ -5,7 +5,7 @@ from bayscraper import settings
 from bayscraper.spiders.baySpider import BaySpider
 from scrapy.settings import Settings
 from scrapy.xlib.pydispatch import dispatcher
-
+from threading import Thread
 from twisted.internet import reactor, task
 
 class SpiderFarm(object):
@@ -16,6 +16,9 @@ class SpiderFarm(object):
 
     # static thread
     t = None 
+
+    # Reactor iteration delta (s)
+    delta = 1.0
 
     @classmethod
     def loopRunner( cls,_1=None, _2=None):
@@ -30,12 +33,17 @@ class SpiderFarm(object):
             b()
 
     @classmethod
-    def scrapCallback( cls ):
+    def scrapCallback( cls, spider, reason ):
         """
         Called on spider shutdown.
         Might work, eventually
         """
         print('Scraping Done.')
+        print(spider)
+        print(spider.query)
+        print(reason)
+        
+        # notify client now....
 
 
     @classmethod
@@ -48,12 +56,10 @@ class SpiderFarm(object):
         if cls.t is None :
             print('Starting reactor...')
             l = task.LoopingCall(cls.loopRunner)
-            #l.start(5.0)
-            l.start(5.0)
-            from threading import Thread
+            l.start(cls.delta)
             cls.t = Thread(target=reactor.run, args=(False,))
             cls.t.start()
-
+            
         # Create the spider
         spider = BaySpider()
         if query != '':
@@ -67,6 +73,8 @@ class SpiderFarm(object):
         cls.crawler = Crawler(ownSettings)
         cls.crawler.configure()
         cls.crawler.crawl(spider)
+
+        #dispatcher.connect(cls.scrapCallback, signal=signals.spider_closed)
         print('Spider is set up')
 
         # Schedule spider start
