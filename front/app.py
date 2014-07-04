@@ -37,6 +37,7 @@ def show_index():
 @app.route('/scrap')
 @app.route('/scrap/<query>')
 def scrap(query=''):
+    print('\n\n'+'='*30+'\nDealing with query')
     time, err = zoo.SpiderFarm.sendSpider(query)
     return 'Scrapped in {} seconds. Easy.<a href="/">Results</a>'.format(time)
 

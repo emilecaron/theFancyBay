@@ -11,6 +11,7 @@ from twisted.internet import reactor, task
 class SpiderFarm(object):
 
     # Scheduled function -> executed on next iteration 
+    # TODO: use list to manage simultaneous queries
     f = None
 
     # static thread
@@ -18,9 +19,10 @@ class SpiderFarm(object):
 
     @classmethod
     def loopRunner( cls,_1=None, _2=None):
-        #print('Mission is complete')
-        #print(_1)
-        #print(_2)
+        """
+        Called on every reactor iteration
+        Triggers the functions in cls.f
+        """
         if cls.f !=None:
             print('crawler.start()')
             b = cls.f
@@ -29,6 +31,10 @@ class SpiderFarm(object):
 
     @classmethod
     def scrapCallback( cls ):
+        """
+        Called on spider shutdown.
+        Might work, eventually
+        """
         print('Scraping Done.')
 
 
@@ -38,7 +44,7 @@ class SpiderFarm(object):
         Load a BaySpider with its settings + run scrapy
         Returns (scraptime, error)
         """
-        # start a thread if static t is None
+        # Manage spider thread  
         if cls.t is None :
             print('Starting reactor...')
             l = task.LoopingCall(cls.loopRunner)
@@ -48,34 +54,25 @@ class SpiderFarm(object):
             cls.t = Thread(target=reactor.run, args=(False,))
             cls.t.start()
 
-
+        # Create the spider
         spider = BaySpider()
         if query != '':
             print('Making custom search...')
             spider.loadSearch(query)
         spider.callBack(cls.scrapCallback)
+        
+        # Configure scrapy settings
         ownSettings = get_project_settings()
         ownSettings.setmodule(settings)
         cls.crawler = Crawler(ownSettings)
         cls.crawler.configure()
         cls.crawler.crawl(spider)
-        print('Spider ready...')
-        #d.addCallback(missionComplete)
-        try :
-            pass
-            #cls.crawler.signals.connect(cls.missionComplete, signals.engine_stopped)
-            #dispatcher.connect(cls.missionComplete, signals.spider_closed)
-        except:
-            pass
-        #log.start(loglevel=log.DEBUG)
-        #log.start()
-        #d = cls.crawler.start()
+        print('Spider is set up')
+
+        # Schedule spider start
         cls.f = cls.crawler.start
-        #import time
-        #time.sleep(10)
-        #log.start()
-        print('Spider sent...')
-        #return d
+        print('Spider is in the launching ramp')
+
         return "foo", 0
 
 
