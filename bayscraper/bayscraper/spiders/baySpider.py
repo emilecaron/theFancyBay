@@ -8,26 +8,13 @@ from scrapy.xlib.pydispatch import dispatcher
 from bayscraper.items import MovieItem, bayDomain, imdbDomain
 import json
 
-class BaySpider(Spider):
+class BessifSpider(Spider):
     """
-    PirateBay result page -> Piratebay Torrent Page -> Imdb Page
+    Custom Spider with embedded callback and simple item json output
     """
-    name = "BaySpider"
-    allowed_domains = [ bayDomain, imdbDomain]
-    start_urls = [
-        'http://{}/top/201'.format(bayDomain)
-     ] 
-    query=''
 
-    def loadStartUrl(self, search):
-        """
-        Build and set start url from search
-        """
-        url = 'http://{}/top/201'.format(bayDomain)
-        if search :
-            url = 'http://{}/search/{}/0/99/200'.format(bayDomain, search)
-        BaySpider.start_urls = [ url ]
-        self.query=search
+    def __init__(self):
+        raise NotImplementedError
 
     def callBack(self, mtd):
         """
@@ -36,6 +23,7 @@ class BaySpider(Spider):
         """
         dispatcher.connect(mtd, signal=signals.spider_closed)
         #TODO : disconnect ???
+
 
     def setItemPipe( self, mtd ):
         """
@@ -52,6 +40,29 @@ class BaySpider(Spider):
         if item :
             self.pipe(json.dumps(dict(item)))
         
+
+
+class BaySpider(BessifSpider):
+    """
+    PirateBay result page -> Piratebay Torrent Page -> Imdb Page
+    """
+    name = "BaySpider"
+    allowed_domains = [ bayDomain, imdbDomain]
+    start_urls = [] 
+
+    def __init__(self):
+        pass
+
+    def loadStartUrl(self, search):
+        """
+        Build and set start url from search
+        """
+        url = 'http://{}/top/201'.format(bayDomain)
+        if search :
+            url = 'http://{}/search/{}/0/99/200'.format(bayDomain, search)
+        BaySpider.start_urls = [ url ]
+        self.query=search
+
 
     def parse(self, response):
         """
