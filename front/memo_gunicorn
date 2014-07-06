@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ### startup + listen on lan + logs
-gunicorn -k flask_sockets.worker app:app -b 0.0.0.0:8000 --log-file=-
+gunicorn -k flask_sockets.worker app:app -b 0.0.0.0:8000 --log-file=- &
 
 ### reload app
 # kill -HUP master_pid

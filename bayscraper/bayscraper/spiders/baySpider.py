@@ -13,9 +13,6 @@ class BessifSpider(Spider):
     Custom Spider with embedded callback and simple item json output
     """
 
-    def __init__(self):
-        raise NotImplementedError
-
     def callBack(self, mtd):
         """
         Add a function to call on spider closing
@@ -46,12 +43,11 @@ class BaySpider(BessifSpider):
     """
     PirateBay result page -> Piratebay Torrent Page -> Imdb Page
     """
+
     name = "BaySpider"
     allowed_domains = [ bayDomain, imdbDomain]
     start_urls = [] 
 
-    def __init__(self):
-        pass
 
     def loadStartUrl(self, search):
         """
@@ -119,6 +115,7 @@ class BaySpider(BessifSpider):
 
         self.log('No Imdb for ' + response.meta['item']['name'])
 
+
     def parseMovieImdb(self, response):
         """
         Retrieve image path and return item
@@ -129,7 +126,10 @@ class BaySpider(BessifSpider):
         imgx = '//img[contains(@alt, "Poster") and substring-after(@alt, "Poster")=""]/@src' 
         namex = '//h1[@class="header"]/span[@itemprop="name"]/text()'
         img = sel.xpath(imgx).extract()
-        name= sel.xpath(namex).extract().pop()
+        try:
+            name=sel.xpath(namex).extract().pop()
+        except IndexError:
+            name='undefined'
 
         if img :
             item['img'] = img[0]

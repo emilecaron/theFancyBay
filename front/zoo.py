@@ -21,7 +21,8 @@ class SpiderFarm(object):
     delta = 1.0
 
     @classmethod
-    def loopRunner( cls,_1=None, _2=None):
+    #def loopRunner( cls,_1=None, _2=None):
+    def loopRunner( cls):
         """
         Called on every reactor iteration
         Triggers the functions in cls.f
@@ -38,12 +39,7 @@ class SpiderFarm(object):
         Called on spider shutdown.
         Might work, eventually
         """
-        print('Scraping Done.')
-        print(spider)
-        print(spider.query)
-        print(reason)
-        
-        # notify client now....
+        print('Scraping Done (reason="{}", search="{}")'.format(reason,spider.query))
 
 
     @classmethod

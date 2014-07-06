@@ -13,10 +13,11 @@ $(document).ready( function(){
     
     // setup websocket
     var grid = $('.moviegrid');
-    ws = new WebSocket('ws://'+ document.domain +':8000/echo');
+    ws = new WebSocket('ws://'+ document.domain +':8000/socket');
     ws.onopen = function () {
         console.log('Websocket is up and running');
-        ws.send('matrix');
+        //load top 100 on startup
+        ws.send('');
     };
     ws.onerror = function (err) {
         console.log('Websocket Error : '+err);
@@ -25,7 +26,6 @@ $(document).ready( function(){
     // Display movies on receive
     ws.onmessage = function (msg) {
         obj = JSON.parse(msg.data)
-        console.log(obj)
         grid.append(movie(obj));
     }
 });
