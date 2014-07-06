@@ -1,5 +1,4 @@
-from flask import Flask, render_template, url_for, send_from_directory #, json
-#from pymongo import Connection
+from flask import Flask, render_template, url_for, send_from_directory, json
 from os import path
 import requests
 import zoo
@@ -25,7 +24,6 @@ except Exception:
     exit(1)
     
 db = con.moviesdb
-#db = con.moviesdb
 
 ### SOCKETS (beta) #################################################
 
@@ -33,7 +31,18 @@ db = con.moviesdb
 def echo_socket(ws):
     while True:
         message = ws.receive()
-        ws.send(message)
+        #time.sleep(1)
+
+        dat = db['movies'].find()[0]
+        dat['_id'] = '' #dirtyfix
+        
+        print('json=')
+        print(dat)
+        ws.send(json.dumps(dat))
+
+@app.route('/socket')
+def socketpage():
+    return render_template('socket.html')
 
 ### ROUTING ########################################################
 
