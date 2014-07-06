@@ -1,59 +1,32 @@
-from flask import Flask, render_template, url_for, send_from_directory #, json
-#from pymongo import Connection
+from flask import Flask, render_template, url_for, send_from_directory#, json
 from os import path
 import requests
 import zoo
-import time
-from mongokit import Connection, ConnectionError
 from flask_sockets import Sockets
 
-#configuration
-MONGODB_HOST = 'localhost'
-MONGODB_PORT = 27017
 
 # create the application object
 app = Flask(__name__)
 app.config.from_object(__name__)
 sockets = Sockets(app)
 
-# connect to the database
-try :
-    con = Connection( app.config['MONGODB_HOST'],
-                      app.config['MONGODB_PORT'])
-except Exception:
-    print('Couldn\'t connect to mongo db. Exiting...')
-    exit(1)
-    
-db = con.moviesdb
-#db = con.moviesdb
 
-### SOCKETS (beta) #################################################
-
-@sockets.route('/echo')
+@sockets.route('/socket')
 def echo_socket(ws):
     while True:
-        message = ws.receive()
-        ws.send(message)
+        query = ws.receive()
+        time, err = zoo.SpiderFarm.sendSpider( query, pipe=ws.send )    
 
-### ROUTING ########################################################
 
 @app.route('/')
-def show_index():
-    dat = db['movies'].find()
-    return render_template('show_movies.html', movies=dat)
-
-@app.route('/scrap')
-@app.route('/scrap/<query>')
-def scrap(query=''):
-    print('\n\n'+'='*30+'\nDealing with query')
-    time, err = zoo.SpiderFarm.sendSpider(query)
-    return 'Scrapped in {} seconds. Easy.<a href="/">Results</a>'.format(time)
+def socketpage():
+    return render_template('home.html')
 
 
 @app.route('/cache/<path:img>')
 def get_img(img):
     '''
-    Cache imdb images to prevent hotlinks
+    Cache imdb images (imdb dont like no hotlinking...)
     '''
     if not path.isfile('cache/'+img):
         # query and store
@@ -66,8 +39,6 @@ def get_img(img):
             try :
                 r = requests.get(url, stream=True)
             except requests.ConnectionError as e:
-                print('\n\n\nImage error for url({}): {}'.format(5-rem, url))
-                print('\n\n\n')
                 time.sleep(0.1)
                 continue
             with open(local_filename, 'wb') as f:
@@ -82,5 +53,4 @@ def get_img(img):
 
 
 if __name__=="__main__" :
-    app.debug = True
-    app.run(host="0.0.0.0")
+    print('See provided \'memo_gunicorn\' to launch app with websocket support')

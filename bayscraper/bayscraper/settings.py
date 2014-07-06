@@ -10,7 +10,7 @@ BOT_NAME = 'bayscraper'
 
 SPIDER_MODULES = ['bayscraper.spiders']
 NEWSPIDER_MODULE = 'bayscraper.spiders'
-ITEM_PIPELINES = {'bayscraper.pipelines.BayPipeline': 300 }
+ITEM_PIPELINES = {}
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'bayscraper (+http://www.yourdomain.com)'
+USER_AGENT = 'zozor (+http://www.idonthaveadomain.com)'

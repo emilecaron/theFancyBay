@@ -6,33 +6,59 @@ from scrapy.contrib.loader.processor import Join
 from scrapy.http import Request
 from scrapy.xlib.pydispatch import dispatcher
 from bayscraper.items import MovieItem, bayDomain, imdbDomain
+import json
 
-class BaySpider(Spider):
+class BessifSpider(Spider):
     """
-    PirateBay result page -> Piratebay Torrent Page -> Imdb Page
+    Custom Spider with embedded callback and simple item json output
     """
-    name = "BaySpider"
-    allowed_domains = [ bayDomain, imdbDomain]
-    start_urls = [
-        'http://{}/top/201'.format(bayDomain),
-     ] 
-    query=''
-
-    def loadSearch(self, query):
-        """
-        Build and set start url from search
-        """
-        url = 'http://{}/search/{}/0/99/200'.format(bayDomain, query)
-        BaySpider.start_urls = [ url ]
-        self.query=query
 
     def callBack(self, mtd):
         """
         Add a function to call on spider closing
         Its parameters must be (spider, reason) 
         """
-        dispatcher.connect(mtd, signals.spider_closed)
+        dispatcher.connect(mtd, signal=signals.spider_closed)
         #TODO : disconnect ???
+
+
+    def setItemPipe( self, mtd ):
+        """
+        Add a function to pass item json to when item is scraped
+        + connect signal to its handler
+        """
+        self.pipe = mtd
+        dispatcher.connect(self.item_scraped_handler, signal=signals.item_scraped)
+
+    def item_scraped_handler(self, item):
+        """
+        Jsonify item and send to pipe
+        """
+        if item :
+            self.pipe(json.dumps(dict(item)))
+        
+
+
+class BaySpider(BessifSpider):
+    """
+    PirateBay result page -> Piratebay Torrent Page -> Imdb Page
+    """
+
+    name = "BaySpider"
+    allowed_domains = [ bayDomain, imdbDomain]
+    start_urls = [] 
+
+
+    def loadStartUrl(self, search):
+        """
+        Build and set start url from search
+        """
+        url = 'http://{}/top/201'.format(bayDomain)
+        if search :
+            url = 'http://{}/search/{}/0/99/200'.format(bayDomain, search)
+        BaySpider.start_urls = [ url ]
+        self.query=search
+
 
     def parse(self, response):
         """
@@ -44,7 +70,7 @@ class BaySpider(Spider):
             'name'      : 'td/div[@class="detName"]/a/text()',
             'link'  : 'td/div[@class="detName"]/a/@href',
             'seeders'   : 'td[position()=3]/text()',
-            'leechers'  : 'td[position()=3]/text()',
+            'leechers'  : 'td[position()=4]/text()',
             'magnet'    :  'td/a[starts-with(@href, "magnet")]/@href'
         }
 
@@ -89,6 +115,7 @@ class BaySpider(Spider):
 
         self.log('No Imdb for ' + response.meta['item']['name'])
 
+
     def parseMovieImdb(self, response):
         """
         Retrieve image path and return item
@@ -99,7 +126,10 @@ class BaySpider(Spider):
         imgx = '//img[contains(@alt, "Poster") and substring-after(@alt, "Poster")=""]/@src' 
         namex = '//h1[@class="header"]/span[@itemprop="name"]/text()'
         img = sel.xpath(imgx).extract()
-        name= sel.xpath(namex).extract().pop()
+        try:
+            name=sel.xpath(namex).extract().pop()
+        except IndexError:
+            name='undefined'
 
         if img :
             item['img'] = img[0]
