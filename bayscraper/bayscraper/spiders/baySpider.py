@@ -6,6 +6,7 @@ from scrapy.contrib.loader.processor import Join
 from scrapy.http import Request
 from scrapy.xlib.pydispatch import dispatcher
 from bayscraper.items import MovieItem, bayDomain, imdbDomain
+import json
 
 class BaySpider(Spider):
     """
@@ -14,25 +15,43 @@ class BaySpider(Spider):
     name = "BaySpider"
     allowed_domains = [ bayDomain, imdbDomain]
     start_urls = [
-        'http://{}/top/201'.format(bayDomain),
+        'http://{}/top/201'.format(bayDomain)
      ] 
     query=''
 
-    def loadSearch(self, query):
+    def loadStartUrl(self, search):
         """
         Build and set start url from search
         """
-        url = 'http://{}/search/{}/0/99/200'.format(bayDomain, query)
+        url = 'http://{}/top/201'.format(bayDomain)
+        if search :
+            url = 'http://{}/search/{}/0/99/200'.format(bayDomain, search)
         BaySpider.start_urls = [ url ]
-        self.query=query
+        self.query=search
 
     def callBack(self, mtd):
         """
         Add a function to call on spider closing
         Its parameters must be (spider, reason) 
         """
-        dispatcher.connect(mtd, signals.spider_closed)
+        dispatcher.connect(mtd, signal=signals.spider_closed)
         #TODO : disconnect ???
+
+    def setItemPipe( self, mtd ):
+        """
+        Add a function to pass item json to when item is scraped
+        + connect signal to its handler
+        """
+        self.pipe = mtd
+        dispatcher.connect(self.item_scraped_handler, signal=signals.item_scraped)
+
+    def item_scraped_handler(self, item):
+        """
+        Jsonify item and send to pipe
+        """
+        if item :
+            self.pipe(json.dumps(dict(item)))
+        
 
     def parse(self, response):
         """
@@ -44,7 +63,7 @@ class BaySpider(Spider):
             'name'      : 'td/div[@class="detName"]/a/text()',
             'link'  : 'td/div[@class="detName"]/a/@href',
             'seeders'   : 'td[position()=3]/text()',
-            'leechers'  : 'td[position()=3]/text()',
+            'leechers'  : 'td[position()=4]/text()',
             'magnet'    :  'td/a[starts-with(@href, "magnet")]/@href'
         }
 

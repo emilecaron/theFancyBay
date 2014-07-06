@@ -47,9 +47,11 @@ class SpiderFarm(object):
 
 
     @classmethod
-    def sendSpider( cls, query='' ):
+    def sendSpider( cls, query='', pipe=None):
         """
         Load a BaySpider with its settings + run scrapy
+        Query is searched movie
+        pipe is function to call for each item scrapped
         Returns (scraptime, error)
         """
         # Manage spider thread  
@@ -62,26 +64,26 @@ class SpiderFarm(object):
             
         # Create the spider
         spider = BaySpider()
-        if query != '':
-            print('Making custom search...')
-            spider.loadSearch(query)
+        spider.loadStartUrl(search=query)
+
+        # bind callbacks
         spider.callBack(cls.scrapCallback)
-        
-        # Configure scrapy settings
-        ownSettings = get_project_settings()
-        ownSettings.setmodule(settings)
-        cls.crawler = Crawler(ownSettings)
+        spider.setItemPipe( pipe )
+
+        # Configure crawler settings
+        cls.crawler = Crawler( Settings()) # pipeline not needed anymore...
         cls.crawler.configure()
         cls.crawler.crawl(spider)
-
-        #dispatcher.connect(cls.scrapCallback, signal=signals.spider_closed)
         print('Spider is set up')
 
         # Schedule spider start
         cls.f = cls.crawler.start
         print('Spider is in the launching ramp')
 
-        return "foo", 0
+        # spider debug only
+        log.start(logfile='spider.log',logstdout=None)
+
+        return "foo", 0 #TODO implement dat
 
 
 if __name__=='__main__' :

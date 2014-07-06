@@ -2,6 +2,8 @@
  * A flask_websocket experiment by zozor
  */
 
+var ws;
+
 $(document).ready( function(){
     // prepare movie template
     var movie;    
@@ -11,7 +13,7 @@ $(document).ready( function(){
     
     // setup websocket
     var grid = $('.moviegrid');
-    var ws = new WebSocket('ws://'+ document.domain +':8000/echo');
+    ws = new WebSocket('ws://'+ document.domain +':8000/echo');
     ws.onopen = function () {
         console.log('Websocket is up and running');
         ws.send('matrix');

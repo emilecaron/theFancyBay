@@ -30,15 +30,8 @@ db = con.moviesdb
 @sockets.route('/echo')
 def echo_socket(ws):
     while True:
-        message = ws.receive()
-        #time.sleep(1)
-
-        dat = db['movies'].find()[0]
-        dat['_id'] = '' #dirtyfix
-        
-        print('json=')
-        print(dat)
-        ws.send(json.dumps(dat))
+        query = ws.receive()
+        time, err = zoo.SpiderFarm.sendSpider( query, pipe=ws.send )    
 
 @app.route('/socket')
 def socketpage():
@@ -54,7 +47,6 @@ def show_index():
 @app.route('/scrap')
 @app.route('/scrap/<query>')
 def scrap(query=''):
-    print('\n\n'+'='*30+'\nDealing with query')
     time, err = zoo.SpiderFarm.sendSpider(query)
     return 'Scrapped in {} seconds. Easy.<a href="/">Results</a>'.format(time)
 
