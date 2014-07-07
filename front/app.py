@@ -2,6 +2,7 @@ from flask import Flask, render_template, url_for, send_from_directory#, json
 from os import path
 import requests
 import zoo
+import re
 from flask_sockets import Sockets
 
 
@@ -10,13 +11,22 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 sockets = Sockets(app)
 
-
+search_reg = re.compile('SEARCH=(.*)')
 
 @sockets.route('/socket')
 def echo_socket(ws):
-    #while True:
-    query = ws.receive()
-    time, err = zoo.SpiderFarm.sendSpider( query, pipe=ws.send, sync=True )    
+    #query = None
+    #while not isinstance(query, str):
+    try :
+        query = ws.receive()
+    except :
+        print('Websocket is down...')
+        return
+    #
+    valid = search_reg.match(query)
+    if valid:
+        print('Valid search, going for it')
+        time, err = zoo.SpiderFarm.sendSpider( valid.group(1), pipe=ws.send, sync=True )    
 
 @app.route('/')
 def socketpage():
