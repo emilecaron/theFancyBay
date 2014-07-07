@@ -20,7 +20,7 @@ The site should be available on port 8000.
 Features
 -----------
 Browse a enhanced version of piratebay that will only display movies with a valid [IMDB](http://imdb.org) link. Scrapy will crawl the search page and extract all useful data (links, seed, leech) then will jump to imdb to retrieve the image. Results will show up on the page as soon as they are found using a websocket for communication. Custom searches are supported.
-
+To download, just mouse over the bottom of the picture and the link will appear.
 The server will only store images to prevent hotlinking to imdb.org, nothing else is stored, no database is required.
 
 
