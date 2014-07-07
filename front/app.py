@@ -11,12 +11,12 @@ app.config.from_object(__name__)
 sockets = Sockets(app)
 
 
+
 @sockets.route('/socket')
 def echo_socket(ws):
-    while True:
-        query = ws.receive()
-        time, err = zoo.SpiderFarm.sendSpider( query, pipe=ws.send )    
-
+    #while True:
+    query = ws.receive()
+    time, err = zoo.SpiderFarm.sendSpider( query, pipe=ws.send, sync=True )    
 
 @app.route('/')
 def socketpage():

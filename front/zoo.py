@@ -7,6 +7,7 @@ from scrapy.settings import Settings
 from scrapy.xlib.pydispatch import dispatcher
 from threading import Thread
 from twisted.internet import reactor, task
+import time
 
 class SpiderFarm(object):
 
@@ -40,16 +41,21 @@ class SpiderFarm(object):
         Might work, eventually
         """
         print('Scraping Done (reason="{}", search="{}")'.format(reason,spider.query))
+        cls.sync = False
 
 
     @classmethod
-    def sendSpider( cls, query='', pipe=None):
+    def sendSpider( cls, query='', pipe=None, sync=False):
         """
         Load a BaySpider with its settings + run scrapy
         Query is searched movie
         pipe is function to call for each item scrapped
+        sync: async / sync function
         Returns (scraptime, error)
         """
+        # TODO class variable = not good at all, find something else....
+        cls.sync = sync
+
         # Manage spider thread  
         if cls.t is None :
             print('Starting reactor...')
@@ -78,6 +84,10 @@ class SpiderFarm(object):
 
         # spider debug only
         log.start(logfile='spider.log',logstdout=None)
+
+        while cls.sync:
+            # wait for callback...
+            time.sleep(0.1)
 
         return "foo", 0 #TODO implement dat
 

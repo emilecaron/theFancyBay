@@ -16,18 +16,18 @@ body{
     float: left;
 }
 
-.hidden {
+.zoz-hidden {
     opacity: 0;
     border-radius: 3px 3px 3px 3px;
 
 }
 
-.hidden:hover {
+.zoz-hidden:hover {
     opacity: 1;
     border: 1px solid black;
 }
 
-.stripe {
+.zoz-stripe {
     background: #000;
     position: absolute;
     opacity: 0.5;

@@ -1,7 +1,9 @@
 {% extends "layout.html" %}
 {% block body %}
 
-<p>Socket experiments</p>
+<div class='header'>
+    <form action='javascript:void(0);'><input type='text'></input></form>
+</div>
 <div class=moviegrid></div>
 
 <script type=text/javascript src="{{ url_for('static', filename='socket.js') }}"></script>

@@ -35,9 +35,10 @@ class BessifSpider(Spider):
         Jsonify item and send to pipe
         """
         if item :
-            self.pipe(json.dumps(dict(item)))
-        
-
+            try :
+                self.pipe(json.dumps(dict(item)))
+            except :
+                print('Socket send Error for '+item['name'])
 
 class BaySpider(BessifSpider):
     """

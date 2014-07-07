@@ -3,6 +3,7 @@
  */
 
 var ws;
+console.log('Running js')
 
 $(document).ready( function(){
     // prepare movie template
