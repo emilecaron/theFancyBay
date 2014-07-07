@@ -2,7 +2,7 @@ theFancyBay
 ===========
 Because piratebay isn't so fancy...
 
-![preview](http://github.com/emilecaron/theFancyBay/blob/master/fancyBay.png)
+![fancyBay](https://raw.githubusercontent.com/emilecaron/theFancyBay/master/fancyBay.png)
 
 Get Started
 -----------
