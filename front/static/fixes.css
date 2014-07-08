@@ -1,9 +1,27 @@
-.button-link {
-    background-color: transparent;
-    border: none;
+body{
+    padding-top: 70px;
 }
 
-.button-link:hover {
-    color: red;
-    text-decoration: none;
+.progress-li {
+    outline: 3px;
+    background-color: grey;
+    /*visibility: hidden;*/
+}
+
+.progress-li.p{
+
+}
+
+.navbar-btn {
+    background-color: transparent;
+    color: #777;
+}
+
+.navbar-btn:active {
+    outline: none;
+    box-shadows: none;
+}
+.navbar-btn:focus {
+    outline: none;
+    box-shadows: none;
 }

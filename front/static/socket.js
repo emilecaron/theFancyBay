@@ -16,10 +16,19 @@ var search_movie = function(query) {
 var get_websocket = function (clbk) {
     if (!ws || ws.readyState!=1){
         ws = new WebSocket('ws://'+ document.domain +':8000/socket');
-        ws.onmessage = function (msg) { grid.append(movie(JSON.parse(msg.data))); };
+        ws.onmessage = read_msg;
         ws.onopen = clbk;
     } else { clbk();}
 };
+
+var read_msg = function (msg){
+    json = JSON.parse(msg.data);
+    if ('control' in json){
+        console.log(json.control.msg);
+    } else {
+        grid.append(movie(json));
+    }
+}
 
 
 $(document).ready( function(){
@@ -29,5 +38,5 @@ $(document).ready( function(){
     
     // Control binds
     $('#search-input').on('change', function(e) {search_movie($(e.currentTarget).val());} );
-    $('.no-submit').submit(function(e){e.preventDefault();});
+    
 });

@@ -15,17 +15,14 @@ search_reg = re.compile('SEARCH=(.*)')
 
 @sockets.route('/socket')
 def echo_socket(ws):
-    #query = None
-    #while not isinstance(query, str):
     try :
         query = ws.receive()
     except :
         print('Websocket is down...')
         return
-    #
+
     valid = search_reg.match(query)
     if valid:
-        print('Valid search, going for it')
         time, err = zoo.SpiderFarm.sendSpider( valid.group(1), pipe=ws.send, sync=True )    
 
 @app.route('/')

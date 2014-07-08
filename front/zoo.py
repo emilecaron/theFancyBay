@@ -8,6 +8,7 @@ from scrapy.xlib.pydispatch import dispatcher
 from threading import Thread
 from twisted.internet import reactor, task
 import time
+import json
 
 class SpiderFarm(object):
 
@@ -53,10 +54,17 @@ class SpiderFarm(object):
         sync: async / sync function
         Returns (scraptime, error)
         """
+        def progress(msg, val):
+            """ Send progress info to client """
+            if pipe:
+                dat = {'control': {'msg':msg,'val' : val}}
+                pipe(json.dumps(dat))
+
         # TODO class variable = not good at all, find something else....
         cls.sync = sync
 
         # Manage spider thread  
+        progress('Starting reactor', 0)
         if cls.t is None :
             print('Starting reactor...')
             l = task.LoopingCall(cls.loopRunner)
@@ -65,6 +73,7 @@ class SpiderFarm(object):
             cls.t.start()
             
         # Create the spider
+        progress('Creating spider', 0)
         spider = BaySpider()
         spider.loadStartUrl(search=query)
 
@@ -79,11 +88,12 @@ class SpiderFarm(object):
         print('Spider is set up')
 
         # Schedule spider start
+        progress('Scheduling spider', 0)
         cls.f = cls.crawler.start
         print('Spider is in the launching ramp')
 
-        # spider debug only
-        log.start(logfile='spider.log',logstdout=None)
+        # use for spider debug only
+        #log.start(logfile='spider.log',logstdout=None)
 
         while cls.sync:
             # wait for callback...
